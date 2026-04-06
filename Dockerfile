@@ -1,26 +1,18 @@
-# 1. Basis-Image (Schlankes Python)
-FROM python:3.10-slim
+# 1. Wir nutzen ein offizielles, leichtgewichtiges Python-Image
+FROM python:3.11-slim
 
-# 2. Arbeitsverzeichnis erstellen
+# 2. Setze das Arbeitsverzeichnis im Container
 WORKDIR /app
 
-# 3. System-Pakete installieren
-# libgomp1 ist die Lösung für den "libgomp.so.1"-Fehler
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    libgomp1 \
-    && rm -rf /var/lib/apt/lists/*
-
-# 4. Python-Abhängigkeiten kopieren und installieren
+# 3. Kopiere die requirements-Datei und installiere die Abhängigkeiten
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 5. Alle Projektdateien kopieren
+# 4. Kopiere den restlichen Code (app.py und den templates-Ordner)
 COPY . .
 
-# 6. Port für Cloud Run freigeben
-EXPOSE 8080
+# 5. Der Port, den Cloud Run erwartet (Standard 8080)
+ENV PORT 8080
 
-# 7. Startbefehl
-# Hinweis: Ich nutze hier Faktorenanalyse.py, da dein Log dies als Hauptdatei zeigt
-CMD ["streamlit", "run", "streamlit_app.py", "--server.port=8080", "--server.address=0.0.0.0"]
+# 6. Befehl zum Starten der App mit uvicorn
+CMD ["uvicorn", "app.py:app", "--host", "0.0.0.0", "--port", "8080"]
