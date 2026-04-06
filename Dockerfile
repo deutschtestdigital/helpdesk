@@ -15,4 +15,4 @@ COPY . .
 ENV PORT 8080
 
 # 6. Befehl zum Starten der App mit uvicorn
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["uvicorn", "streamlit_app:app", "--host", "0.0.0.0", "--port", "8080"]
